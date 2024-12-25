@@ -1,0 +1,5 @@
+Payroll_Number,Forenames,Surname,Date_of_Birth,Telephone,Mobile,Address,Address_2,Postcode,EMail_Home,Start_Date
+987654,Alice,Smith,3/12/1990,112233445,112233446,789 Oak Avenue,Apt 5,54321,alice.smith@email.com,7/15/2022
+987655,Bob,Johnson,8/22/1992,112233447,112233448,321 Pine Road,Apt 6,65432,bob.johnson@email.com,6/20/2023
+987656,Charlie,Brown,11/5/1988,112233449,112233450,654 Cedar Street,Apt 2,76543,charlie.brown@email.com,4/18/2021
+987657,David,Williams,2/28/1995,112233451,112233452,123 Maple Lane,Apt 3,87654,david.williams@email.com,9/25/2020
