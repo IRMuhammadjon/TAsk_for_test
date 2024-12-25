@@ -22,44 +22,73 @@ namespace EmployeManagement.Controllers
             _mapper = mapper;
         }
 
-        public IActionResult Employee()
+        public IActionResult Employee(string sortOrder, string searchString)
         {
-            var list = _appDbContext.Employees.ToList();
-            if (list.Count == 0)
+            // Set up sorting order for the columns
+            ViewBag.NameSortParm = String.IsNullOrEmpty(sortOrder) ? "name_desc" : "";
+            ViewBag.SurnameSortParm = sortOrder == "Surname" ? "surname_desc" : "Surname";
+            ViewBag.DateSortParm = sortOrder == "Date" ? "date_desc" : "Date";
+
+            var employees = from e in _appDbContext.Employees
+                select e;
+
+            // Search filter
+            if (!String.IsNullOrEmpty(searchString))
             {
-                list = new List<Employee>
-                {
-                    new Employee
-                    {
-                        Payroll_Number = "123456",
-                        Forenames = "John",
-                        Surname = "Doe",
-                        Date_of_Birth = new DateTime(1980, 1, 1),
-                        Telephone = "0123456789",
-                        Mobile = "0123456789",
-                        Address = "123 Main Street",
-                        Address_2 = "Apt 1",
-                        Postcode = "12345",
-                        EMail_Home = ""
-                    },
-                    new Employee
-                    {
-                        Payroll_Number = "123457",
-                        Forenames = "Jane",
-                        Surname = "Doe",
-                        Date_of_Birth = new DateTime(1980, 1, 1),
-                        Telephone = "0123456789",
-                        Mobile = "0123456789",
-                        Address = "123 Main Street",
-                        Address_2 = "Apt 1",
-                        Postcode = "12345",
-                        EMail_Home = ""
-                    }
-                };
+                employees = employees.Where(e => e.Surname.ToLower().Contains(searchString.ToLower())
+                                                 || e.Forenames.ToLower().Contains(searchString.ToLower()));
             }
-            return View(list);
+
+            // Sort based on selected order
+            switch (sortOrder)
+            {
+                case "Surname":
+                    employees = employees.OrderBy(e => e.Surname);  // Ascending order
+                    break;
+                case "surname_desc":
+                    employees = employees.OrderByDescending(e => e.Surname);  // Descending order
+                    break;
+                case "Date":
+                    employees = employees.OrderBy(e => e.Date_of_Birth);  // Ascending order by Date_of_Birth
+                    break;
+                case "date_desc":
+                    employees = employees.OrderByDescending(e => e.Date_of_Birth);  // Descending order by Date_of_Birth
+                    break;
+                default:
+                    employees = employees.OrderBy(e => e.Surname);  // Default sorting by Surname (ascending)
+                    break;
+            }
+
+            return View(employees.ToList());
         }
 
+
+        [HttpGet]
+        public IActionResult EditEmployee(int id)
+        {
+            var employee = _appDbContext.Employees.Find(id);
+            if (employee == null)
+            {
+                return NotFound();
+            }
+            return PartialView("_EditEmployeePartial", employee);
+        }
+
+        [HttpPost]
+        public IActionResult EditEmployee(Employee employee)
+        {
+            if (ModelState.IsValid)
+            {
+                employee.Date_of_Birth = employee.Date_of_Birth.ToUniversalTime();
+                employee.Start_Date = employee.Start_Date.ToUniversalTime();
+                _appDbContext.Update(employee);
+                _appDbContext.SaveChanges();
+                return RedirectToAction("Employee");
+            }
+            return PartialView("_EditEmployeePartial", employee);
+        }
+
+        
         [HttpPost]
         public IActionResult ImportEmployeeData(IFormFile fileUpload)
         {
@@ -70,7 +99,7 @@ namespace EmployeManagement.Controllers
                 {
                     fileUpload.CopyTo(stream);
                 }
-
+                int count = 0;
                 var employees = new List<Employee>();
                 try
                 {
@@ -81,12 +110,13 @@ namespace EmployeManagement.Controllers
                         {
                             csv.Read();
                             csv.ReadHeader();
-                    
                             while (csv.Read())
                             {
                                 var employee = csv.GetRecord<EmployeeDto>();
-                                    SaveToDatabase(employee); 
+                                SaveToDatabase(employee);
+                                count++;
                             }
+                            TempData["Message"] = $"{count} rows were successfully processed.";
                         }
                     }
                     else if (fileUpload.FileName.EndsWith(".xlsx"))
@@ -134,6 +164,7 @@ namespace EmployeManagement.Controllers
                     return RedirectToAction("Employee");
                 }
 
+                TempData["Message"] = $"{count} rows were successfully processed.";
                 return RedirectToAction("Employee");
             }
 

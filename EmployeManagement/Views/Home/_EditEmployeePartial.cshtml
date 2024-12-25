@@ -1,0 +1,50 @@
+@model Employee
+
+<form class="form-label" id="editEmployeeForm" method="post" asp-action="EditEmployee">
+    <div class="mb-3">
+        <label asp-for="Payroll_Number" class="form-label">Payroll Number</label>
+        <input asp-for="Payroll_Number" class="form-control" />
+    </div>
+    <div class="mb-3">
+        <label asp-for="Forenames" class="form-label">Forenames</label>
+        <input asp-for="Forenames" class="form-control" />
+    </div>
+    <div class="mb-3">
+        <label asp-for="Surname" class="form-label">Surname</label>
+        <input asp-for="Surname" class="form-control" />
+    </div>
+    <div class="mb-3">
+        <label asp-for="Date_of_Birth" class="form-label">Date of Birth</label>
+        <input asp-for="Date_of_Birth" class="form-control" type="date" />
+    </div>
+    <div class="mb-3">
+        <label asp-for="Telephone" class="form-label">Telephone</label>
+        <input asp-for="Telephone" class="form-control" />
+    </div>
+    <div class="mb-3">
+        <label asp-for="Mobile" class="form-label">Mobile</label>
+        <input asp-for="Mobile" class="form-control" />
+    </div>
+    <div class="mb-3">
+        <label asp-for="Address" class="form-label">Address</label>
+        <input asp-for="Address" class="form-control" />
+    </div>
+    <div class="mb-3">
+        <label asp-for="Address_2" class="form-label">Address 2</label>
+        <input asp-for="Address_2" class="form-control" />
+    </div>
+    <div class="mb-3">
+        <label asp-for="Postcode" class="form-label">Postcode</label>
+        <input asp-for="Postcode" class="form-control" />
+    </div>
+    <div class="mb-3">
+        <label asp-for="EMail_Home" class="form-label">Email</label>
+        <input asp-for="EMail_Home" class="form-control" />
+    </div>
+    <div class="mb-3">
+        <label asp-for="Start_Date" class="form-label">Start Date</label>
+        <input asp-for="Start_Date" class="form-control" type="date" />
+    </div>
+
+    <button type="submit" class="btn btn-primary">Save</button>
+</form>
